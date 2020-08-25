@@ -12,7 +12,7 @@ const jsonBodyParser = express.json();
 //res.status(400) = bad request
 
 entriesRouter
-    .post('/', jsonBodyParser, (req, res, next) => {
+    .post('/', requireAuth, jsonBodyParser, (req, res, next) => {
         const {userId, mood, reflection, shareType} =req.body;
         const entryInfo = {userId, mood, reflection, shareType};
         
@@ -35,14 +35,14 @@ entriesRouter
 
     //for all entries
 entriesRouter
-    .get('/',requireAuth,(req, res, next) => {
+    .get('/', requireAuth,(req, res, next) => {
         EntriesService.getAllEntries(req.app.get('db'))
 
 
         .then(entries => {
             res
                 .status(200)
-                .send('hello')
+                // .send('hello')
                 .json( {entries: entries});
         
         })
@@ -51,7 +51,7 @@ entriesRouter
 
     //for specific entries
 // entriesRouter
-//     .get('/', jsonBodyParser, (req, res, next) => {
+//     .get('/', requireAuth, jsonBodyParser, (req, res, next) => {
 
 //         const { entryId } = req.query
 //         const {user_name, password} =req.body;
@@ -86,7 +86,7 @@ entriesRouter
 
     // SECONDARY
 entriesRouter
-    .get('/like-entry', jsonBodyParser, (req, res, next) => {
+    .get('/like-entry', requireAuth, jsonBodyParser, (req, res, next) => {
         const {user_name, password} =req.body;
         const loginUser = {user_name, password};
         
@@ -103,7 +103,7 @@ entriesRouter
 
 
 entriesRouter
-    .patch('/', jsonBodyParser, (req, res, next) => {
+    .patch('/', requireAuth, jsonBodyParser, (req, res, next) => {
         const {user_name, password} =req.body;
         const loginUser = {user_name, password};
         
@@ -119,7 +119,7 @@ entriesRouter
     });
 
 entriesRouter
-    .delete('/', jsonBodyParser, (req, res, next) => {
+    .delete('/', requireAuth, jsonBodyParser, (req, res, next) => {
         const {user_name, password} =req.body;
         const loginUser = {user_name, password};
         

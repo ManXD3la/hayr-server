@@ -23,7 +23,7 @@ function requireAuth(req, res, next) {
 
     
     req.app.get('db')('hayr_users')
-        .where({ email_addres: tokenUserName})
+        .where({ email_address: tokenUserName})
         .first()
         .then(user => {
             if (!user || user.user_password !== tokenPassword) {
@@ -32,7 +32,6 @@ function requireAuth(req, res, next) {
 
             next();
         });
-        .catch(next)
 }
 
 module.exports = {

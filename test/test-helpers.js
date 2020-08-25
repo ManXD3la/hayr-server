@@ -6,4 +6,4 @@ function makeAuthHeader(user) {
 
 module.export ={
     makeAuthHeader
-}
+};

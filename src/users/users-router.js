@@ -1,15 +1,14 @@
 /* eslint-disable indent */
 const express = require('express');
+const {requireAuth} = require('../middleware/auth');
 const UsersService = require('./users-service');
 const { json } = require('express');
 
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
 
-console.log('user');
-
 usersRouter
-    .post('/', jsonBodyParser, (req, res, next) => {
+    .post('/', jsonBodyParser, (req, res) => {
         console.log(req.body);
         const {userName, emailAddress, userPassword} =req.body;
         const newAccount = {emailAddress, userPassword};
@@ -36,7 +35,7 @@ usersRouter
     });
 
 usersRouter
-    .get('/', jsonBodyParser, (req, res, next) => {
+    .get('/', requireAuth,jsonBodyParser, (req, res, next) => {
         const {user_name, password} =req.body;
         const loginUser = {user_name, password};
         
@@ -52,7 +51,7 @@ usersRouter
     });
 
 usersRouter
-    .patch('/', jsonBodyParser, (req, res, next) => {
+    .patch('/', requireAuth, jsonBodyParser, (req, res, next) => {
         const {user_name, password} =req.body;
         const loginUser = {user_name, password};
         
@@ -68,7 +67,7 @@ usersRouter
     });
 
 usersRouter
-    .delete('/', jsonBodyParser, (req, res, next) => {
+    .delete('/', requireAuth, jsonBodyParser, (req, res, next) => {
         const {user_name, password} =req.body;
         const loginUser = {user_name, password};
         
