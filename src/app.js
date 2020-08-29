@@ -9,24 +9,16 @@ const { NODE_ENV } = require('./config');
 const usersRouter = require('./users/users-router');
 const entriesRouter = require('./entries/entries-router');
 
-const {requireAuth} =require('../src/middleware/auth');
-const knex = require('knex');
+// const {requireAuth} =require('../src/middleware/auth');
+// const knex = require('knex');
 
 
 const app = express();
 
-console.log('hello there');
+app.use(morgan((NODE_ENV === 'production') ? 'tiny' : 'common', {
+  skip: () => NODE_ENV === 'test',
+}));
 
-const db = knex({
-  client: 'pg',
-  connection: process.env.TEST_DB_URL
-});
-
-app.set('db',db);
-
-// app.use(morgan((NODE_ENV === 'production') ? 'tiny' : 'common', {
-//   skip: () => NODE_ENV === 'test',
-// }));
 app.use(cors());
 app.use(helmet());
 
