@@ -2,7 +2,7 @@ CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   name TEXT,
   user_name TEXT NOT NULL UNIQUE,
-  email TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
-  admin BOOLEAN NOT NULL DEFAULT 0,
+  admin_y BOOLEAN NOT NULL,
 );

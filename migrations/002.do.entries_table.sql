@@ -1,9 +1,8 @@
 CREATE TABLE entries (
   id SERIAL PRIMARY KEY,
-  client_id INTEGER REFERENCES client(id) ON DELETE CASCADE NOT NULL,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE SET NULL,
-  date TIMESTAMPTZ DEFAULT now() NOT NULL,
+  userId INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  date_created TIMESTAMP DEFAULT NOW() NOT NULL,
   reflection TEXT,
-  mood_pleasant INTEGER,
-  mood_energy INTEGER
+  mood_pleasant INTEGER CHECK(mood_pleasant < 256),
+  mood_energy INTEGER CHECK(mood_energy < 256)
 );
