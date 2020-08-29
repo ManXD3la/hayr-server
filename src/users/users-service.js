@@ -5,12 +5,9 @@ const UsersService = {
     createUser(db, newUserInfo) {
         
         return db
-            .into('hayr_users')
-            .insert({user_name:`${newUserInfo.user_name}`,
-                    email_address:`${newUserInfo.email_address}`,
-                    user_password:`${newUserInfo.user_password}`,
-                    id:`${uuidv4}`})
-            .returning('user_name','email_address'); // last
+            .into('users')
+            .insert(newUserInfo);
+            // .returning('*'); // last
     },
     // R
     getUserInfo(db) {
