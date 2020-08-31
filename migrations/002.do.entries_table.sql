@@ -1,6 +1,6 @@
 CREATE TABLE entries (
   id SERIAL PRIMARY KEY,
-  userId INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  id_user INTEGER REFERENCES users(id) ON DELETE SET NULL,
   date_created TIMESTAMP DEFAULT NOW() NOT NULL,
   reflection TEXT,
   mood_pleasant INTEGER CHECK(mood_pleasant < 256),

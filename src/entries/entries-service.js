@@ -1,25 +1,27 @@
 /* eslint-disable indent */
+const xss = require('xss');
 const { v4: uuidv4 } = require('uuid');
 const EntriesService = {
 
 
     // C
     makeEntry(db, entryInfo) {
-        return db('hayr_entries')
+        return db('entries')
             .insert({
-                id: `${uuidv4}`,
-                user_created: `${entryInfo.userId}`,
-                mood: `${entryInfo.mood}`,
-                reflection: `${entryInfo.reflection}`,
-                share_type: `${entryInfo.shareType}`
-
-            });
+                id_user: entryInfo.userId,
+                reflection: `${entryInfo.userId}`,
+                mood_pleasant: entryInfo.mood,
+                mmod_energy: entryInfo.reflection
+            })
+            .returning('*');
     },
 
     // R
-    // getAllUserEntries(db, userId) {
-    //     return null;
-    // },
+    getAllEntries(db, userId) {
+        return db('entries')
+            .select('*')
+            // .where('share_type','public');
+    },
 
     // getEntrybyId(db, id)
     //     return db
@@ -27,38 +29,37 @@ const EntriesService = {
     //         .from('hayr_entries')
 
     // },
-    getAllEntries(db) {
-        return db
+    getAllUserEntries(db, userId) {
+        return db('entries')
                 .select('*')
-                .from('hayr_entries')
-
+                .where('id_user',`${userId}`);
     },
 
     getUserEntriesMonth(db, month, year) {
         return null;
     },
 
-    // getUserEntriesWeek(db) {
+    // getUserEntriesWeek(db, userId, month, week) {
     //     return null;
     // },
 
-    getSimilarEntries(db, entryId) {
-        return null;
+    getSimilarEntries(db, simEntryInfo) {
+        return db('entries')
+        .select('id','refelction','mood_pleasant','mood_energy')
+        .where('id', simEntryInfo.id)
+        .where('share_type','public')
+        .where('mood_pleasant',[simEntryInfo.mood_pleasant - 25, simEntryInfo.mood_pleasant + 25])
+        .where('mood_energy',[simEntryInfo.mood_energy - 25, simEntryInfo.mood_energy + 25])
+        .orderby('created','desc')
+        .limit(10);
     },
 
     getRandomPublicEntries(db) {
-        return db
-            .from('hayr_entries')
-            .select('created','mood','reflection')
-            .where({
-              share_type: 'public'
-            })
-            .orderby('created','desc') //may need to be reveresed
-            
-            
-            .then(data => {
-              console.log(data);
-            });
+        return db('entries')
+            .select('id','refelction','mood_pleasant','mood_energy')
+            .where('share_type','public')
+            .orderby('created','desc')
+            .limit(30);
     },
 
     // U
@@ -68,28 +69,21 @@ const EntriesService = {
     
     // D
     deleteEntry(db, entryId) {
-        return db
-            .from('hayr_entries')
+        return db('entries')
+            .del()
             .where('id',`${entryId}`);
     },
 
-    // serializeComment(comment) {
-    //     const { user } = comment
-    //     return {
-    //       id: comment.id,
-    //       text: xss(comment.text),
-    //       article_id: comment.article_id,
-    //       date_created: new Date(comment.date_created),
-    //       user: {
-    //         id: user.id,
-    //         user_name: user.user_name,
-    //         full_name: user.full_name,
-    //         nickname: user.nickname,
-    //         date_created: new Date(user.date_created),
-    //         date_modified: new Date(user.date_modified) || null
-    //       },
-    //     }
-    //   }
+    serializeEntry(entryInfo) {
+        return {
+            id: entryInfo.id,
+            user_id: entryInfo.id_user,
+            date_created: entryInfo.date_created,
+            reflection: xss(entryInfo.reflection),
+            mood_pleasant: entryInfo.mood_pleasant,
+            mood_energy: entryInfo.mood_energy
+        };
+    }
 
 };
 
