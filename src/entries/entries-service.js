@@ -9,26 +9,26 @@ const EntriesService = {
         return db('entries')
             .insert({
                 id_user: entryInfo.userId,
-                reflection: `${entryInfo.userId}`,
-                mood_pleasant: entryInfo.mood,
-                mmod_energy: entryInfo.reflection
+                reflection: `${entryInfo.reflection}`,
+                mood_pleasant: entryInfo.mood_pleasant,
+                mood_energy: entryInfo.mood_energy
             })
             .returning('*');
     },
 
     // R
-    getAllEntries(db, userId) {
+    getAllEntries(db) {
         return db('entries')
             .select('*')
             // .where('share_type','public');
     },
 
-    // getEntrybyId(db, id)
-    //     return db
-    //         .select('*') //just entry with id
-    //         .from('hayr_entries')
+    getSpecEntry(db, entryId) {
+        return db('entries')
+            .select('*')
+            .where('id', entryId)
+    },
 
-    // },
     getAllUserEntries(db, userId) {
         return db('entries')
                 .select('*')
@@ -54,7 +54,7 @@ const EntriesService = {
         .limit(10);
     },
 
-    getRandomPublicEntries(db) {
+    getRecentPublicEntries(db) {
         return db('entries')
             .select('id','refelction','mood_pleasant','mood_energy')
             .where('share_type','public')
