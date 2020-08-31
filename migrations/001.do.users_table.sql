@@ -4,5 +4,5 @@ CREATE TABLE users (
   user_name TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
-  admin_y BOOLEAN NOT NULL,
+  admin_y BOOLEAN NOT NULL
 );

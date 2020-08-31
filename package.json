@@ -9,10 +9,10 @@
     "start": "node src/server.js",
     "predeploy": "npm audit",
     "deploy": "git push heroku master",
-    "migrate": "postgrator --config postgrator-config.js"
+    "migrate": "postgrator --config src/postgrator-config.js"
   },
   "keywords": [],
-  "author": "Thomas `tomatao` Hudspith-Tatham <iammotivated@gmail.com>",
+  "author": "M. Jones",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -23,7 +23,7 @@
     "knex": "^0.21.1",
     "moment": "^2.27.0",
     "morgan": "^1.9.1",
-    "pg": "^8.2.1",
+    "pg": "^8.3.3",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
