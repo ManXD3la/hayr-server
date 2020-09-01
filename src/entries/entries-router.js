@@ -43,8 +43,10 @@ entriesRouter.route('/')
 
     .get((req, res, next) => {
     // .get('/', requireAuth,(req, res, next) => {
-
-        EntriesService.getAllEntries(req.app.get('db'))
+        // get user_name from token, then userid from user service with user name and save
+        EntriesService.getAllUserEntries(req.app.get('db'),
+            userId
+        )
         .then(entries => {
             res
                 .status(200)
@@ -69,17 +71,13 @@ entriesRouter
 
     // SECONDARY
     // entriesRouter
-    // .get('/like-entry', requireAuth, jsonBodyParser, (req, res, next) => {
-    //     const {user_name, password} =req.body;
-    //     const loginUser = {user_name, password};
-        
-    //     for (const [key, value] of Object.entries(loginUser))
-    //     if (value === null)
-    //             return res.status(400).json({
-    //                 error: `Mising '${key}' in request body`
-    //             });
-                
-    //     res.send('ok');
+    // .get('/:entryId/community', requireAuth, (req, res, next) => {
+        // get entry info(id and both moods) set in object
+        // run similar entry service to send back 
+
+        // .then(entries => {
+            //     res.send('ok');
+        // })        
     // });
 
 
