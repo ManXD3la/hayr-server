@@ -12,8 +12,8 @@ VALUES
     'Harry The Manager',
     'hayr-harry01',
     'h.manatier@scresscity.com',
-    -- password = "pass"
-    '$2a$10$fCWkaGbt7ZErxaxclioLteLUgg4Q3Rp09WW0s/wSLxDKYsaGYUpjG',
+    -- password = "aTru3@dmin$wordpast"
+    '$2a$10$/f18v.QOMyw8olR9E0OXgOH4MYwNW/Jydl0JQiY0gJi145jveRpFK',
     true
   ),
   (
@@ -21,8 +21,8 @@ VALUES
     'Art The Developer',
     'hayr-arty010',
     'a.isskilltime@scresscity.com',
-    -- password = "pass"
-    '$2a$10$fCWkaGbt7ZErxaxclioLteLUgg4Q3Rp09WW0s/wSLxDKYsaGYUpjG',
+    -- password = "p@stworld0fAn3wtEmpoyee4"
+    '$2a$10$Hv/PhT1fvoevTXWZQGeTd.a2A0o61edvGD9ozHqwf1FtpUzAtfHvC',
     false
   );
 
