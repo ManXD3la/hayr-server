@@ -6,17 +6,16 @@ const entriesRouter = express.Router();
 const jsonBodyParser = express.json();
 
 //res.status(200) = success get & patch
-//res.status(201) = success post
 //res.status(204) = success delete
 //res.status(404) = unsuccessful not found
 //res.status(400) = bad request
 
 entriesRouter.route('/')
+    .all(requireAuth)
     .post(jsonBodyParser, (req, res, next) => {
-    // .post('/', requireAuth, jsonBodyParser, (req, res, next) => {
-        const {userId, reflection, mood_pleasant, mood_energy} =req.body;
+        const {reflection, mood_pleasant, mood_energy} =req.body;
         
-        for (const field of ['userId','mood_pleasant','mood_energy'])
+        for (const field of [mood_pleasant','mood_energy'])
         if (!req.body[field])
         return res.status(400).json({
             error: `Mising '${field}' in request body`
@@ -24,7 +23,7 @@ entriesRouter.route('/')
         
         
         const entryInfo = {
-            userId,
+            userId: req.user.id,
             reflection,
             mood_pleasant,
             mood_energy};
@@ -42,10 +41,9 @@ entriesRouter.route('/')
     })
 
     .get((req, res, next) => {
-    // .get('/', requireAuth,(req, res, next) => {
         // get user_name from token, then userid from user service with user name and save
         EntriesService.getAllUserEntries(req.app.get('db'),
-            userId
+            req.user.id
         )
         .then(entries => {
             res
@@ -58,7 +56,7 @@ entriesRouter.route('/')
 
     
 entriesRouter
-    .get('/public',(req, res, next) => {
+    .get('/public', requireAuth, (req, res, next) => {
         EntriesService.getRecentPublicEntries(req.app.get('db'))
         .then(entries => {
             res
@@ -83,8 +81,8 @@ entriesRouter
 
 // for specific entries
 entriesRouter.route('/:entryId')
+    .all(requireAuth)
     .get((req, res, next) => {
-    // .get(requireAuth, (req, res, next) => {        
         // service for getting specific entry info
         EntriesService.getSpecEntry(req.app.get('db'),
             req.params.entryId)
@@ -105,7 +103,9 @@ entriesRouter.route('/:entryId')
             });
     })
 
-    .patch(requireAuth, jsonBodyParser, (req, res, next) => {
+    .patch(jsonBodyParser, (req, res, next) => {
+        // need to check to see if user requesting patch is owner
+
         const {user_name, password} =req.body;
         const loginUser = {user_name, password};
         
@@ -121,6 +121,7 @@ entriesRouter.route('/:entryId')
     })
 
     .delete((req, res, next) => {
+        // need to check to see if user requesting delete is owner
         EntriesService.deleteEntry(req.app.get('db'),
             req.params.entryId)
         .then( entryDeleted => {

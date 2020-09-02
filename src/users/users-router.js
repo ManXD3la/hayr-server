@@ -2,6 +2,7 @@
 const express = require('express');
 const {requireAuth} = require('../middleware/auth');
 const UsersService = require('./users-service');
+const bcrypt = require('bcryptjs');
 const { json } = require('express');
 
 const usersRouter = express.Router();
@@ -18,12 +19,16 @@ usersRouter
                 return res.status(400).json({
             error: `Missing '${field}' in request body`,
         });
+
+        // validate user_name and email is unique/not taken, validate password is secure* 
+
+
         
         const newUserInfo = {
             name,
             user_name,
             email,
-            password,
+            password: bcrypt.hash(`${password}`,10),
             admin_y: false
         };
         UsersService.createUser(
@@ -42,9 +47,9 @@ usersRouter
     });
 
 usersRouter.route('/:user_name')
-// all require auth 
+    .all(requireAuth)
     .get((req, res, next) => {
-    // .get(requireAuth, (req, res, next) => {
+    // check if user requesting info is same user
         const {user_name} =req.params;
         
         // service for getting singular user info
@@ -78,6 +83,7 @@ usersRouter.route('/:user_name')
     // })
 
     .delete((req, res, next) => {
+        //check if user requesting delete is same user deleting
         UsersService.deleteUser(req.app.get('db'),
             req.params.user_name)
         .then( userDeleted => {
