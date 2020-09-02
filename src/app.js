@@ -16,10 +16,8 @@ const authRouter = require('./auth/auth-router');
 
 const app = express();
 
-app.use(morgan((NODE_ENV === 'production') ? 'tiny' : 'common', {
-  skip: () => NODE_ENV === 'test',
-}));
-
+const morganSetting = process.env.NODE_ENV === 'production' ? 'tiny' : 'common' ;
+app.use(morgan(morganSetting));
 app.use(cors());
 app.use(helmet());
 
@@ -33,7 +31,8 @@ app.use(function errorHandler(error, req, res, next) {
   if (NODE_ENV === 'production') {
     console.error(error);
     response = { error: 'server error' };
-  } else {
+  }
+  else {
     console.error(error);
     response = { error: error.message, details: error };
   }
