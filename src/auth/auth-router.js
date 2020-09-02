@@ -9,12 +9,9 @@ const jsonBodyParser = express.json();
 
 
 authRouter
-    .post('/', requireAuth, jsonBodyParser, (req, res, next) => {
+    .post('/login', requireAuth, jsonBodyParser, (req, res, next) => {
         console.log('all user info to share', req.user)
-        res.send('ok')
-        .then (() =>
-        console.log('all user info to share', req.user)
-        )
+        res.status(201).send('ok')
         
         // const { user_name, password} = req.body;
         // const loginUser = { user_name, password};
@@ -42,10 +39,10 @@ authRouter
         //                 res.send('Login success');
         //             })
         //     })
-            .catch((err) => {
-                console.log(err);
-                next();
-            });
+            // .catch((err) => {
+            //     console.log(err);
+            //     next();
+            // });
     });
 
 module.exports = authRouter;

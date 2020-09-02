@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 const xss = require('xss');
-const { v4: uuidv4 } = require('uuid');
+// const { v4: uuidv4 } = require('uuid');
 const EntriesService = {
 
 
@@ -47,7 +47,7 @@ const EntriesService = {
         return db('entries')
         .select('id','refelction','mood_pleasant','mood_energy')
         .where('id', simEntryInfo.id)
-        .where('share_type','public')
+        .where('entry_share','public')
         .where('mood_pleasant',[simEntryInfo.mood_pleasant - 25, simEntryInfo.mood_pleasant + 25])
         .where('mood_energy',[simEntryInfo.mood_energy - 25, simEntryInfo.mood_energy + 25])
         .orderby('created','desc')
@@ -57,7 +57,7 @@ const EntriesService = {
     getRecentPublicEntries(db) {
         return db('entries')
             .select('id','refelction','mood_pleasant','mood_energy')
-            .where('share_type','public')
+            .where('entry_share','public')
             .orderby('created','desc')
             .limit(30);
     },

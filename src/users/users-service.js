@@ -24,6 +24,12 @@ const UsersService = {
             .del()
             .where('user_name', `${userName}`);
     },
+
+    getAllUserInfo(db) {
+        return db
+            .from('users')
+            .select(['id','name','user_name','email');
+    }
 };
 
 module.exports = UsersService;

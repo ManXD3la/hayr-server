@@ -15,11 +15,11 @@ entriesRouter.route('/')
     .post(jsonBodyParser, (req, res, next) => {
         const {reflection, mood_pleasant, mood_energy} =req.body;
         
-        for (const field of [mood_pleasant','mood_energy'])
-        if (!req.body[field])
-        return res.status(400).json({
-            error: `Mising '${field}' in request body`
-        });
+        for (const field of ['mood_pleasant','mood_energy'])
+            if (!req.body[field])
+                return res.status(400).json({
+                    error: `Mising '${field}' in request body`
+                });
         
         
         const entryInfo = {
@@ -38,6 +38,10 @@ entriesRouter.route('/')
             .status(200)
             .json(newEntryData);
         })
+        .catch((err) => {
+            console.log(err);
+            next();
+        });
     })
 
     .get((req, res, next) => {
@@ -46,15 +50,14 @@ entriesRouter.route('/')
             req.user.id
         )
         .then(entries => {
-            res
-                .status(200)
-                .json(entries);
-        
+            res.status(200).json(entries);
         })
-        .catch(console.error)
+        .catch((err) => {
+            console.log(err);
+            next();
+        });
     });
 
-    
 entriesRouter
     .get('/public', requireAuth, (req, res, next) => {
         EntriesService.getRecentPublicEntries(req.app.get('db'))
@@ -64,7 +67,10 @@ entriesRouter
                 .json(entries);
         
         })
-        .catch(console.error)
+        .catch((err) => {
+            console.log(err);
+            next();
+        });
     });    
 
     // SECONDARY

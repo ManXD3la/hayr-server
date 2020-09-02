@@ -9,7 +9,7 @@ const usersRouter = express.Router();
 const jsonBodyParser = express.json();
 
 usersRouter
-    .post('/', jsonBodyParser, (req, res) => {
+    .post('/', jsonBodyParser, (req, res, next) => {
         console.log(req.body);
         const {name, user_name, email, password} =req.body;
 
@@ -28,7 +28,7 @@ usersRouter
             name,
             user_name,
             email,
-            password: bcrypt.hash(`${password}`,10),
+            password: bcrypt.hashSync(password,10),
             admin_y: false
         };
         UsersService.createUser(
@@ -45,6 +45,19 @@ usersRouter
             next();
         });
     });
+
+    usersRouter
+    .get('/', (req, res, next) => {
+        UsersService.getAllUserInfo()
+        .then( users => {
+            res.status(200).json(users)
+        })
+        .catch((err) => {
+            console.log(err);
+            next();
+        });
+    });
+
 
 usersRouter.route('/:user_name')
     .all(requireAuth)
