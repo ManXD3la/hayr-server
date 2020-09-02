@@ -8,6 +8,7 @@ const { NODE_ENV } = require('./config');
 
 const usersRouter = require('./users/users-router');
 const entriesRouter = require('./entries/entries-router');
+const authRouter = require('./auth/auth-router');
 
 // const {requireAuth} =require('../src/middleware/auth');
 // const knex = require('knex');
@@ -25,6 +26,7 @@ app.use(helmet());
 
 app.use('/api/user', usersRouter);
 app.use('/api/entry', entriesRouter);
+app.use('/api/auth', authRouter);
 
 app.use(function errorHandler(error, req, res, next) {
   let response;
