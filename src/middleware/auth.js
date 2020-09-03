@@ -25,7 +25,7 @@ function requireAuth(req, res, next) {
                 return res.status(401).json({ error: 'Unauthorized request'});
             }
 
-            return AuthService.comaparePasswords(tokenPassword, user.password)
+            return AuthService.comparePasswords(tokenPassword, user.password)
                 .then(passwordsSame => {
                     if (!passwordsSame) {
                         return res.status(401).json({ error: 'Unauthorized request'});

@@ -1,7 +1,5 @@
-const { expect } = require('chai');
 const knex = require('knex');
 const app = require('../src/app');
-const supertest = require('supertest');
 const helpers = require('./test-helpers');
 
 describe('Entries Endpoints', () => {
@@ -15,7 +13,8 @@ describe('Entries Endpoints', () => {
     });
     after('disconnect from db', () => db.destroy());
     before('clean the table', () => helpers.cleanTables(db));
-    afterEach('clean the table', () => helpers.cleanTables(db));
+    beforeEach('clean the tables',() => helpers.cleanTables(db));
+    afterEach('clean the tables', () => helpers.cleanTables(db));
 
     const testUsers = helpers.makeTestUsers();
     const [testUser1, testUser2] = testUsers;
@@ -34,7 +33,7 @@ describe('Entries Endpoints', () => {
             it('responds with 401 missing bearer token when no bearer token', () => {
                 return supertest(app)
                     .get('/api/entry/public')
-                    .expect(401, { error: 'Missing bearer token' });
+                    .expect(401, { error: 'Missing basic token' });
             });
             it('Responds with 401 when no credentials supplied', () => {
                 const userNoCreds = { user_name: '', password: '' };
@@ -51,7 +50,7 @@ describe('Entries Endpoints', () => {
                     .expect(401, { error: 'Unauthorized request' });
             });
             context('Given no entries', () => {
-                beforeEach('seed users', () => helpers.seedUser(db, testUsers));
+                beforeEach('seed users', () => helpers.seedUsers(db, testUsers));
                 it('Responds with 200 and empty list', () => {
                     return supertest(app)
                         .get('/api/entry/public')
@@ -134,7 +133,7 @@ describe('Entries Endpoints', () => {
             it('responds with 401 missing bearer token when no bearer token', () => {
                 return supertest(app)
                     .get('/api/entry/123')
-                    .expect(401, { error: 'Missing bearer token' });
+                    .expect(401, { error: 'Missing basic token' });
             });
 
             it('Responds with 401 when no credentials supplied', () => {
@@ -174,7 +173,7 @@ describe('Entries Endpoints', () => {
             it('responds with 401 missing bearer token when no bearer token', () => {
                 return supertest(app)
                     .delete('/api/entry/123')
-                    .expect(401, { error: 'Missing bearer token' });
+                    .expect(401, { error: 'Missing basic token' });
             });
 
             it('Responds with 401 when no credentials supplied', () => {

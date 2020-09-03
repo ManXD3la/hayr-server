@@ -9,14 +9,14 @@ function makeKnexInstance() {
 }
 
 function seedUsers(db, users) {
-    const preppedUsers = users.map(users => ({
+    const preppedUsers = users.map(user => ({
         ...user,
         password: bcrypt.hashSync(user.password, 10)
     }))
     return db.transaction(async trx => {
         await trx.into('users').insert(preppedUsers)
         await trx.raw(
-            `SELECT setval('myclientele_user_id_seq', ?)`,
+            `SELECT setval('users_id_seq', ?)`,
             [users[users.length - 1].id],
         ) 
     })
@@ -41,7 +41,7 @@ function makeTestUsers() {
         admin_y: false
         }
     ]
-}
+};
 
 function makeTestEntries(user1,user2) {
     return [
@@ -114,7 +114,7 @@ function cleanTables(db) {
 }
 
 
-module.export ={
+module.exports ={
     makeKnexInstance,
     makeTestUsers,
     seedUsers,

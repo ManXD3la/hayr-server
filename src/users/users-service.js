@@ -59,7 +59,7 @@ const UsersService = {
     getAllUserInfo(db) {
         return db
             .from('users')
-            .select(['id','name','user_name','email');
+            .select(['id','name','user_name','email']);
     }
 };
 

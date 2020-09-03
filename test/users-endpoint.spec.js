@@ -1,7 +1,6 @@
 const knex = require('knex');
 const app = require('../src/app');
 const helpers = require('./test-helpers');
-const supertest = require('supertest');
 
 describe('Users Endpoints', () => {
     let db;
@@ -36,7 +35,7 @@ describe('Users Endpoints', () => {
             };
 
             return supertest(app)
-                .post('/api/users')
+                .post('/api/user')
                 .send(userInfoMissReqBody)
                 .expect(400);
         });
@@ -50,7 +49,7 @@ describe('Users Endpoints', () => {
                 email: testUser.email,
             };
             return supertest(app)
-                .post('/api/users')
+                .post('/api/user')
                 .send(invalidPasswordReqBody)
                 .expect(400);
         });
@@ -63,7 +62,7 @@ describe('Users Endpoints', () => {
 
             it('400 response if username exists', () => {
                 return supertest(app)
-                    .post('/api/users')
+                    .post('/api/user')
                     .send(reqBody)
                     .expect(400, {error:'Username already exists'});
             });
@@ -76,7 +75,7 @@ describe('Users Endpoints', () => {
                     email: testUser.email,
                 };
                 return supertest(app)
-                    .post('/api/users')
+                    .post('/api/user')
                     .send(invalidEmailInReqBody)
                     .expect(400, {error:'User with that email already exists'});
             });
@@ -85,7 +84,7 @@ describe('Users Endpoints', () => {
         // returns 200 if is user is and company are inserted
         it('201 response when company info, user info, and valid password is sent', () => {
             return supertest(app)
-                .post('/api/users')
+                .post('/api/user')
                 .send(reqBody)
                 .expect(200);
         });
