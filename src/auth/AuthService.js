@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs');
 
 const AuthService = {
     getUserWithUserName(db, user_name) {
-        return db('users')
+        return db
+            .from('users')
+            .select('*')
             .where({ user_name })
             .first();
     },
@@ -12,7 +14,7 @@ const AuthService = {
             .toString()
             .split(':');
     },
-    comaparePasswords(password, hash) {
+    comparePasswords(password, hash) {
         return bcrypt.compare(password, hash);
     }
 };
