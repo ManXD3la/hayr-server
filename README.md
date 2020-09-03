@@ -10,8 +10,8 @@ Base Url: https://shielded-badlands-61965.herokuapp.com/api
 | /user/       | post     | Takes registration info , then creates both a new account for a user|
 | /user/:user_name       | get     | Gets user information for user (name, user name, email)|
 | /user/:user_name       | delete     | Deletes user account.  Must be logged in as user to delete |
-| /entry/       | post     | Takes entry information, inserts in to database and returns the entry information in an object                    |
-| /entry/       | get     | Gets all entries for associated with user, returns entries an object                    |
+| /entry       | post     | Takes entry information, inserts in to database and returns the entry information in an object                    |
+| /entry       | get     | Gets all entries for associated with user, returns entries an object                    |
 | /entry/public       | get     | Gets most 30 publicly shared entries, returns entries as an object                    |
 | /entry/:entryId       | get     | Takes entry id as a path parameter, returns entry information as an object                    |
 | /entry/:entryId/community       | get     | Takes entry id as a path parameter, removes entry from database                    |
