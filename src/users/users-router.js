@@ -9,7 +9,7 @@ const usersRouter = express.Router();
 const jsonBodyParser = express.json();
 
 usersRouter
-    .post('/', jsonBodyParser, (req, res, next) => {
+    .post('/', jsonBodyParser, async (req, res, next) => {
         console.log(req.body);
         const {name, user_name, email, password} =req.body;
 
@@ -21,55 +21,55 @@ usersRouter
         });
 
         // validate user_name and email is unique/not taken, validate password is secure* 
-        const passwordError = UsersService.validatePassword(password);
+        try {
+            const passwordError = UsersService.validatePassword(password);
 
-        if (passwordError) {
-            return res.status(400).json({ error: passwordError });
+            if (passwordError) {
+                return res.status(400).json({ error: passwordError });
+            }
+
+            const duplicateUserError = await UsersService.validateUser(req.app.get("db"),
+                user_name
+            );
+
+            if (duplicateUserError) {
+                return res.status(400).json({ error: "Username already exists" });
+            }
+
+            const emailInDatabase = await UsersService.getUserWithEmail(req.app.get("db"),
+                email
+            );
+            if (emailInDatabase) {
+                return res.status(400).json({ error: `User with that email already exists` });
+            }
+
+            const newUserInfo = {
+                name,
+                user_name,
+                email,
+                password: bcrypt.hashSync(password,10),
+                admin_y: false
+            };
+            
+            await UsersService.createUser(
+                req.app.get('db'),
+                newUserInfo)
+            .then(userName => {
+                console.log(userName);
+                res
+                    .status(200)
+                    .json(userName);
+            })
         }
-
-        const duplicateUserError = UsersService.validateUser(
-            req.app.get('db'),
-            user_name
-        );
-
-        if (duplicateUserError) {
-            return res.status(400).json({ error: 'Username already exists' });
-        }
-        const emailInDatabase = UsersService.getUserWithEmail(
-            req.app.get('db'),
-            email
-        );
-        if (emailInDatabase) {
-            return res
-            .status(400)
-            .json({ error: 'User with that email already exists' });
-        }
-
-        const newUserInfo = {
-            name,
-            user_name,
-            email,
-            password: bcrypt.hashSync(password,10),
-            admin_y: false
-        };
-        UsersService.createUser(
-            req.app.get('db'),
-            newUserInfo)
-        .then(userName => {
-            console.log(userName);
-            res
-                .status(200)
-                .json(userName);
-        })
-        .catch((err) => {
+        catch(err) {
             console.log(err);
-            next();
-        });
+            next(err);
+        };
     });
 
     usersRouter
     .get('/', (req, res, next) => {
-        UsersService.getAllUserInfo()
+        UsersService.getAllUserInfo(req.app.get('db'))
         .then( users => {
             res.status(200).json(users)
         })

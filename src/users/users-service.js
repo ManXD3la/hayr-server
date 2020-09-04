@@ -23,7 +23,7 @@ const UsersService = {
             .where({ user_name })
             .first()
             .then((user) => !!user);
-        },
+    },
     
     getUserWithEmail(db, email) {
         return db('users')
@@ -57,8 +57,7 @@ const UsersService = {
     },
 
     getAllUserInfo(db) {
-        return db
-            .from('users')
+        return db('users')
             .select(['id','name','user_name','email']);
     }
 };
