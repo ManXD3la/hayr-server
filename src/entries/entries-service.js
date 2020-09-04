@@ -11,7 +11,8 @@ const EntriesService = {
                 id_user: entryInfo.userId,
                 reflection: `${entryInfo.reflection}`,
                 mood_pleasant: entryInfo.mood_pleasant,
-                mood_energy: entryInfo.mood_energy
+                mood_energy: entryInfo.mood_energy,
+                share_type: 'public'
             })
             .returning('*');
     },
@@ -32,7 +33,8 @@ const EntriesService = {
     getAllUserEntries(db, userId) {
         return db('entries')
                 .select('*')
-                .where('id_user',`${userId}`);
+                .where('id_user',`${userId}`)
+                .orderBy('date_created','desc');
     },
 
     getUserEntriesMonth(db, month, year) {
@@ -50,15 +52,15 @@ const EntriesService = {
         .where('entry_share','public')
         .where('mood_pleasant',[simEntryInfo.mood_pleasant - 25, simEntryInfo.mood_pleasant + 25])
         .where('mood_energy',[simEntryInfo.mood_energy - 25, simEntryInfo.mood_energy + 25])
-        .orderby('created','desc')
+        .orderBy('date_created','desc')
         .limit(10);
     },
 
     getRecentPublicEntries(db) {
         return db('entries')
-            .select('id','refelction','mood_pleasant','mood_energy')
+            .select('id','reflection','mood_pleasant','mood_energy')
             .where('entry_share','public')
-            .orderby('created','desc')
+            .orderBy('date_created','desc')
             .limit(30);
     },
 
