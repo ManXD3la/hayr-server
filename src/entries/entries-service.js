@@ -2,6 +2,15 @@
 const xss = require('xss');
 const { v4: uuidv4 } = require('uuid');
 const EntriesService = {
+    // Validations
+    validateUserisOwner(db, entryId,userId) {
+        return db('entries')
+            .where({
+                id: entryId,
+                id_user: userId})
+            .first()
+            .then((user) => !!user);
+    },
 
 
     // C
