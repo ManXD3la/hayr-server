@@ -1,5 +1,4 @@
-# hayr-server
-# MyClientele API
+# HayR API
 
 
 ### Usage
@@ -167,7 +166,7 @@ Run the migrations up: `npm run migrate` , down: `npm run migrate --0`
 When your new project is ready for deployment, add a new heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
 
 
-## MyClientele - Client
+## HayR - Client
 
 This app is meant to run with [https://github.com/ManXD3la/hayr-client] (HayR) client.
 
@@ -175,7 +174,7 @@ Please look at the README.md for more information on utilizing the client.
 
 ### Live Link and Demo Account
 
-The live site can be accessed at [https://appnamehere.vercel.app/](https://appnamehere.vercel.app/)
+The live site can be accessed at [https://hayr-client.vercel.app/](here)
 
 To try the service, please use the credentials below to log in
 
