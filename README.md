@@ -160,7 +160,7 @@ Start nodemon for the application `npm run dev`
 
 Run the tests in watch mode `npm test`
 
-Run the migraitons up: `npm run migrate` , down: `npm run migrate --0`
+Run the migrations up: `npm run migrate` , down: `npm run migrate --0`
 
 ## Deploying
 
@@ -184,11 +184,11 @@ Demo account:
 Username: hayr-arty010<br />
 Password: p@stworld0fAn3wtEmpoyee4
 
-## Client Documentaion
+## Client Documentation
 
 HayR is an application for online journaling used by companies to create safe space to share feelings and thoughts. As you become more comfortable with entering a few words about your day or a simple moment as a reflection, you always have the option to reveal them to others anonymously. By sharing a reflection to the HayR community, you are able to see how others are during that day. When we accept and appreciate all thoughts and feelings that exist, we are able to appreciate the vastness of the human experience like stars in the night sky'
 
-HayR is ideal for organizations with high-stress, fast paced enviroments, and allows you to jot your thoughts and feelings with ease.
+HayR is ideal for organizations with high-stress, fast-paced environments, and allows you to jot your thoughts and feelings with ease.
 
 ## Tech Stack
 
@@ -201,7 +201,7 @@ REACT, JavaScript, CSS3, HTML5, SCSS, NodeJS, ExpressJS, PostgreSQL
 3. Remove the git history with rm -rf .get && git init
 4. Install dependencies with npm install
 5. Move the example Environment file to .env that will be ignored by git and read by React with mv example.env .env
-6. Change project name in package.json to use whatever name you've given this project instead of "name": "myclientele-client"
+6. Change project name in package.json to use whatever name you've given this version of the project 
 
 ## Available Scripts
 
