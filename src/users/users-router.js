@@ -10,7 +10,6 @@ const jsonBodyParser = express.json();
 
 usersRouter
     .post('/', jsonBodyParser, async (req, res, next) => {
-        console.log(req.body);
         const {name, user_name, email, password} =req.body;
 
         
@@ -55,7 +54,6 @@ usersRouter
                 req.app.get('db'),
                 newUserInfo)
             .then(userName => {
-                console.log(userName);
                 res
                     .status(200)
                     .json(userName);
@@ -91,7 +89,6 @@ usersRouter.route('/:user_name')
         req.params.user_name)
         .then( userInfo => {
             // check to see empty userInfo is empty, then send no user exist with code
-            console.log('userInfo from service:',userInfo[0]);
             res.status(200).json(userInfo);
         })
         //make all catches like below
@@ -122,7 +119,6 @@ usersRouter.route('/:user_name')
             req.params.user_name)
         .then( userDeleted => {
             // check to see empty userInfo is empty, then send no user exist with code
-            console.log('userDeleted number from service:',userDeleted);
             if (userDeleted === 1) {
                 res.status(204).end();
             }

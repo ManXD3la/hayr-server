@@ -13,9 +13,9 @@ const jsonBodyParser = express.json();
 entriesRouter.route('/')
     .all(requireAuth)
     .post(jsonBodyParser, (req, res, next) => {
-        const {reflection, mood_pleasant, mood_energy} =req.body;
+        const {reflection, mood_pleasant, mood_energy, entry_share} =req.body;
         
-        for (const field of ['mood_pleasant','mood_energy'])
+        for (const field of ['mood_pleasant','mood_energy','entry_share'])
             if (!req.body[field])
                 return res.status(400).json({
                     error: `Missing '${field}' in request body`
@@ -26,14 +26,14 @@ entriesRouter.route('/')
             userId: req.user.id,
             reflection,
             mood_pleasant,
-            mood_energy};
-        console.log('entryInfo into servce:',entryInfo);
+            mood_energy,
+            entry_share
+        };
         
         EntriesService.makeEntry(req.app.get('db'),
             entryInfo
         )
             .then( newEntryData =>{
-                console.log('from make entry service',newEntryData);
                 res
                     .status(200)
                     .json(newEntryData);
@@ -102,13 +102,10 @@ entriesRouter.route('/:entryId')
     .get((req, res, next) => {
         EntriesService.validateUserisOwner(req.app.get('db'), req.params.entryId, req.user.id)
             .then(UserOwner => {
-                console.log('userOnwer?',UserOwner);
                 if (UserOwner) {
-                    console.log('into userOwner', UserOwner);
                     EntriesService.getSpecUserEntry(req.app.get('db'),
                         req.params.entryId)
                         .then( entryInfo => {
-                            console.log('userInfo from service:',entryInfo);
                             // check to see empty userInfo is empty, then send no user exist with code
                             if (!entryInfo[0]) {
                                 res.status(404).json({error: 'Entry does not exist'});
@@ -126,7 +123,6 @@ entriesRouter.route('/:entryId')
                     EntriesService.getSpecCommunityEntry(req.app.get('db'),
                         req.params.entryId)
                         .then( entryInfo => {
-                            console.log('userInfo from service:',entryInfo);
                             // check to see empty userInfo is empty, then send no user exist with code
                             if (!entryInfo[0]) {
                                 res.status(404).json({error: 'Entry does not exist'});

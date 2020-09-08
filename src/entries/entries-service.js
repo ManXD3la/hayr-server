@@ -21,7 +21,7 @@ const EntriesService = {
                 reflection: `${entryInfo.reflection}`,
                 mood_pleasant: entryInfo.mood_pleasant,
                 mood_energy: entryInfo.mood_energy,
-                share_type: 'public'
+                entry_share: `${entryInfo.entry_share}`
             })
             .returning('*');
     },
