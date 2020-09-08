@@ -2,6 +2,15 @@
 const xss = require('xss');
 // const { v4: uuidv4 } = require('uuid');
 const EntriesService = {
+    // Validations
+    validateUserisOwner(db, entryId,userId) {
+        return db('entries')
+            .where({
+                id: entryId,
+                id_user: userId})
+            .first()
+            .then((user) => !!user);
+    },
 
 
     // C
@@ -12,7 +21,7 @@ const EntriesService = {
                 reflection: `${entryInfo.reflection}`,
                 mood_pleasant: entryInfo.mood_pleasant,
                 mood_energy: entryInfo.mood_energy,
-                share_type: 'public'
+                entry_share: `${entryInfo.entry_share}`
             })
             .returning('*');
     },
@@ -24,9 +33,15 @@ const EntriesService = {
             // .where('share_type','public');
     },
 
-    getSpecEntry(db, entryId) {
+    getSpecUserEntry(db, entryId) {
         return db('entries')
             .select('*')
+            .where('id', entryId)
+    },
+
+    getSpecCommunityEntry(db, entryId) {
+        return db('entries')
+            .select('id','reflection','mood_pleasant','mood_energy')
             .where('id', entryId)
     },
 
@@ -47,7 +62,7 @@ const EntriesService = {
 
     getSimilarEntries(db, simEntryInfo) {
         return db('entries')
-        .select('id','refelction','mood_pleasant','mood_energy')
+        .select('id','reflection','mood_pleasant','mood_energy')
         .where('id', simEntryInfo.id)
         .where('entry_share','public')
         .where('mood_pleasant',[simEntryInfo.mood_pleasant - 25, simEntryInfo.mood_pleasant + 25])
@@ -65,8 +80,11 @@ const EntriesService = {
     },
 
     // U
-    updateEntry(db, entryId, entryInfo) {
-        return null;
+    updateEntryShare(db, entryId, newEntry_share) {
+        return db('entries')
+            .where('id', entryId)
+            .update('entry_share', newEntry_share)
+            .returning('*')
     },
     
     // D

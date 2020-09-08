@@ -13,9 +13,9 @@ const jsonBodyParser = express.json();
 entriesRouter.route('/')
     .all(requireAuth)
     .post(jsonBodyParser, (req, res, next) => {
-        const {reflection, mood_pleasant, mood_energy} =req.body;
+        const {reflection, mood_pleasant, mood_energy, entry_share} =req.body;
         
-        for (const field of ['mood_pleasant','mood_energy'])
+        for (const field of ['mood_pleasant','mood_energy','entry_share'])
             if (!req.body[field])
                 return res.status(400).json({
                     error: `Missing '${field}' in request body`
@@ -26,14 +26,14 @@ entriesRouter.route('/')
             userId: req.user.id,
             reflection,
             mood_pleasant,
-            mood_energy};
-        console.log('entryInfo into servce:',entryInfo);
+            mood_energy,
+            entry_share
+        };
         
         EntriesService.makeEntry(req.app.get('db'),
             entryInfo
         )
             .then( newEntryData =>{
-                console.log('from make entry service',newEntryData);
                 res
                     .status(200)
                     .json(newEntryData);
@@ -45,7 +45,6 @@ entriesRouter.route('/')
     })
 
     .get((req, res, next) => {
-        // get user_name from token, then userid from user service with user name and save
         EntriesService.getAllUserEntries(req.app.get('db'),
             req.user.id
         )
@@ -101,63 +100,104 @@ entriesRouter
 entriesRouter.route('/:entryId')
     .all(requireAuth)
     .get((req, res, next) => {
-        // service for getting specific entry info
-        EntriesService.getSpecEntry(req.app.get('db'),
-            req.params.entryId)
-            .then( entryInfo => {
-                console.log('userInfo from service:',entryInfo);
-                // check to see empty userInfo is empty, then send no user exist with code
-                if (!entryInfo[0]) {
-                    res.status(404).json({error: 'Entry does not exist'});
+        EntriesService.validateUserisOwner(req.app.get('db'), req.params.entryId, req.user.id)
+            .then(UserOwner => {
+                if (UserOwner) {
+                    EntriesService.getSpecUserEntry(req.app.get('db'),
+                        req.params.entryId)
+                        .then( entryInfo => {
+                            // check to see empty userInfo is empty, then send no user exist with code
+                            if (!entryInfo[0]) {
+                                res.status(404).json({error: 'Entry does not exist'});
+                            }
+                            else {
+                                res.status(200).json(entryInfo);
+                            }
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            next();
+                        })
                 }
-                else {
-                    res.status(200).json(entryInfo);
+                else  {
+                    EntriesService.getSpecCommunityEntry(req.app.get('db'),
+                        req.params.entryId)
+                        .then( entryInfo => {
+                            // check to see empty userInfo is empty, then send no user exist with code
+                            if (!entryInfo[0]) {
+                                res.status(404).json({error: 'Entry does not exist'});
+                            }
+                            else {
+                                res.status(200).json(entryInfo);
+                            }
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            next();
+                        })
                 }
             })
-            //make all catches like below
-            .catch((err) => {
-                console.log(err);
-                next();
-            });
     })
 
     .patch(jsonBodyParser, (req, res, next) => {
         // need to check to see if user requesting patch is owner
+        EntriesService.validateUserisOwner(req.app.get('db'), req.params.entryId, req.user.id)
+            .then(UserOwner => {
+                if (UserOwner) {
 
-        const {user_name, password} =req.body;
-        const loginUser = {user_name, password};
-        
-        for (const [key, value] of Object.entries(loginUser))
-            if (value === null)
-                return res.status(400).json({
-                    error: `Missing '${key}' in request body`
-                });
-        
-        // Auth
-        
-        res.send('ok');
+                    for (const field of ['entry_share'])
+                    if (!req.body[field])
+                        return res.status(400).json({
+                            error: 'Missing new share type in request body'
+                        });
+
+                    const {entry_share} =req.body;
+                    EntriesService.updateEntryShare(req.app.get('db'),
+                        req.params.entryId,
+                        entry_share)
+                        .then( newEntryData =>{
+                            console.log('from make entry service',newEntryData);
+                            res
+                                .status(200)
+                                .json(newEntryData);
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            next();
+                        });
+                }
+                else {
+                    res.status(404).json({error: 'Unauthorized request by user'});
+                }
+            });
     })
 
     .delete((req, res, next) => {
         // need to check to see if user requesting delete is owner
-        EntriesService.deleteEntry(req.app.get('db'),
-            req.params.entryId)
-            .then( entryDeleted => {
-            // check to see empty userInfo is empty, then send no user exist with code
-                console.log('etnryDeleted number from service:',entryDeleted);
-                if (entryDeleted === 1) {
-                    res.status(204).end();
+        EntriesService.validateUserisOwner(req.app.get('db'), req.params.entryId, req.user.id)
+            .then(UserOwner => {
+                if (UserOwner) {
+                    EntriesService.deleteEntry(req.app.get('db'),
+                        req.params.entryId)
+                        .then( entryDeleted => {
+                            // check to see empty userInfo is empty, then send no user exist with code
+                            if (entryDeleted === 1) {
+                                res.status(204).end();
+                            }
+                            else {
+                                res.status(404).json({error: 'Entry does not exist'});
+                            }
+                        })
+                    //make all catches like below
+                        .catch((err) => {
+                            console.log(err);
+                            next();
+                        });
                 }
                 else {
-                    res.status(404).json({error: 'Entry does not exist'});
+                    res.status(404).json({error: 'Unauthorized request by user'});
                 }
-            })
-        //make all catches like below
-            .catch((err) => {
-                console.log(err);
-                next();
             });
     });
-
 
 module.exports = entriesRouter;

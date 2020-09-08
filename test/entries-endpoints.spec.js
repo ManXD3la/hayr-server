@@ -168,6 +168,45 @@ describe('Entries Endpoints', () => {
                 });
             });
         });
+        
+        describe('PATCH /api/entry/:entryId', () => {
+            it('responds with 401 missing bearer token when no bearer token', () => {
+                return supertest(app)
+                    .patch('/api/entry/123')
+                    .expect(401, { error: 'Missing basic token' });
+            });
+
+            it('Responds with 401 when no credentials supplied', () => {
+                const userNoCreds = { user_name: '', password: '' };
+                return supertest(app)
+                    .patch('/api/entry/123')
+                    .set('Authorization', helpers.makeAuthHeader(userNoCreds))
+                    .expect(401, { error: 'Unauthorized request' });
+            });
+
+            it('Responds with 401 when invalid user_name', () => {
+                const userInvalidCreds = { user_name: 'karen', password: 'manager' };
+                return supertest(app)
+                    .patch('/api/entry/123')
+                    .set('Authorization', helpers.makeAuthHeader(userInvalidCreds))
+                    .expect(401, { error: 'Unauthorized request' });
+            });
+
+            context('Given entries to patch belonging to user', () => {
+                beforeEach('seed entries', () =>
+                    helpers.seedEntries(db, testUsers, testEntries)
+                );
+                it('responds with 200', () => {
+                    const entryId = specEntry.id;
+                    return supertest(app)
+                        .patch(`/api/entry/${entryId}`)
+                        .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+                        .set('Content-Type','application/json')
+                        .send({"entry_share":"public"})
+                        .expect(204);
+                });
+            });
+        });
 
         describe('DELETE /api/entry/:entryId', () => {
             it('responds with 401 missing bearer token when no bearer token', () => {
@@ -192,7 +231,7 @@ describe('Entries Endpoints', () => {
                     .expect(401, { error: 'Unauthorized request' });
             });
 
-            context('Given entries', () => {
+            context('Given entries to delete belonging to user', () => {
                 beforeEach('seed entries', () =>
                     helpers.seedEntries(db, testUsers, testEntries)
                 );
